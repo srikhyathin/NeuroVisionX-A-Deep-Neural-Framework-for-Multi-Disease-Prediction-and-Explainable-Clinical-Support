@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environment
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Database
+*.db
+*.sqlite3
+
+# Reports
+reports/*.pdf
+
+# Temporary files
+temp/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML model cache
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# Python cache
+.pytest_cache/

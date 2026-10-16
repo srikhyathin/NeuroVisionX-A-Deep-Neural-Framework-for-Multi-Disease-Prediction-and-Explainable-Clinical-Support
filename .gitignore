@@ -1,40 +1,28 @@
+
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-
-# Virtual Environment
 .venv/
 venv/
+.env
+.env.*
+!.env.example
 
-# IDE
+# IDE and operating system
 .vscode/
 .idea/
-
-# Streamlit
-.streamlit/secrets.toml
-
-# Database
-*.db
-*.sqlite3
-
-# Reports
-reports/*.pdf
-
-# Temporary files
-temp/
-*.log
-
-# OS
 .DS_Store
 Thumbs.db
 
-# ML model cache
-.ipynb_checkpoints/
-
-# Environment variables
-.env
-
-# Python cache
+# Logs and temporary files
+*.log
 .pytest_cache/
+.streamlit/secrets.toml
+
+# Generated reports and temporary data
+reports/
+temp/
+# Local patient databases
+*.db
+*.sqlite
+*.sqlite3

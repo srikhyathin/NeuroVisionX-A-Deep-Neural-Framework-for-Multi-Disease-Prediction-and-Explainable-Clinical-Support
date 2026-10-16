@@ -1,14 +1,17 @@
 import os
 import sys
+import pandas as pd
+import streamlit as st
 
 # -------------------------------------------------------
-# Add Project Root to Python Path
+# Project Path
 # -------------------------------------------------------
 
 PROJECT_ROOT = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
-        "../.."
+        "..",
+        ".."
     )
 )
 
@@ -16,11 +19,15 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 # -------------------------------------------------------
-# Imports
+# Frontend Imports
 # -------------------------------------------------------
 
-import pandas as pd
-import streamlit as st
+from sidebar import load_sidebar
+from ui import apply_theme
+
+# -------------------------------------------------------
+# Backend Imports
+# -------------------------------------------------------
 
 from backend.predictor import predict_symptoms
 from backend.database import NeuroVisionDatabase
@@ -28,34 +35,41 @@ from backend.report_generator import ReportGenerator
 from backend.disease_info import DISEASE_INFO
 
 # -------------------------------------------------------
-# Initialize Backend
+# Initialize
 # -------------------------------------------------------
 
 db = NeuroVisionDatabase()
-
 report_generator = ReportGenerator()
 
 # -------------------------------------------------------
-# Streamlit Configuration
+# Streamlit Config
 # -------------------------------------------------------
 
+st.set_page_config(
+    page_title="Symptom Prediction",
+    page_icon="🩺",
+    layout="wide"
+)
+
+apply_theme()
+
+
+# -------------------------------------------------------
+# Title
+# -------------------------------------------------------
 
 st.title("🩺 Symptom Based Disease Prediction")
 
-st.markdown(
-"""
-Select the symptoms experienced by the patient.
-
-NeuroVisionX AI will predict the most probable disease
-based on the selected symptoms.
-"""
-)
+st.markdown("""
+Predict diseases from patient symptoms using the
+NeuroVisionX Artificial Intelligence framework.
+""")
 
 st.divider()
 
-# ----------------------------------------------------
+# -------------------------------------------------------
 # Patient Details
-# ----------------------------------------------------
+# -------------------------------------------------------
 
 st.subheader("👤 Patient Information")
 
@@ -91,30 +105,31 @@ with col2:
 
 st.divider()
 
-# ----------------------------------------------------
-# Load Symptoms
-# ----------------------------------------------------
+# -------------------------------------------------------
+# Load Symptoms Dataset
+# -------------------------------------------------------
 
 st.subheader("🦠 Select Symptoms")
 
 try:
 
-    df = pd.read_csv(
-        "data/symptoms/processed_symptoms.csv"
+    csv_path = os.path.join(
+        PROJECT_ROOT,
+        "data",
+        "symptoms",
+        "processed_symptoms.csv"
     )
 
-except Exception:
+    df = pd.read_csv(csv_path)
 
-    st.error(
-        "processed_symptoms.csv not found."
-    )
+except Exception as e:
 
+    st.error(f"Unable to load symptoms dataset.\n\n{e}")
     st.stop()
 
 symptoms = list(df.columns[:-1])
 
 selected = []
-
 selected_symptoms = []
 
 cols = st.columns(3)
@@ -131,7 +146,6 @@ for i, symptom in enumerate(symptoms):
         if checked:
 
             selected.append(1)
-
             selected_symptoms.append(
                 symptom.replace("_", " ").title()
             )
@@ -141,14 +155,12 @@ for i, symptom in enumerate(symptoms):
             selected.append(0)
 
 predict = st.button(
-
     "🔍 Predict Disease",
-
     use_container_width=True
 )
-# ----------------------------------------------------
+# -------------------------------------------------------
 # Prediction
-# ----------------------------------------------------
+# -------------------------------------------------------
 
 if predict:
 
@@ -188,7 +200,7 @@ if predict:
 
             "precautions": [
 
-                "Consult your doctor."
+                "Please consult a medical professional."
 
             ]
 
@@ -196,9 +208,9 @@ if predict:
 
     )
 
-    # ---------------------------------------------
-    # Generate PDF Report
-    # ---------------------------------------------
+# -------------------------------------------------------
+# Generate PDF Report
+# -------------------------------------------------------
 
     pdf_path = report_generator.generate_report(
 
@@ -222,9 +234,9 @@ if predict:
 
     )
 
-    # ---------------------------------------------
-    # Save Prediction
-    # ---------------------------------------------
+# -------------------------------------------------------
+# Save Prediction
+# -------------------------------------------------------
 
     db.save_prediction(
 
@@ -240,15 +252,15 @@ if predict:
 
         model_used="SymptomNet",
 
-        symptoms=selected_symptoms,
+        symptoms=", ".join(selected_symptoms),
 
         report_path=pdf_path
 
     )
 
-    # ---------------------------------------------
-    # Display Prediction
-    # ---------------------------------------------
+# -------------------------------------------------------
+# Display Result
+# -------------------------------------------------------
 
     st.success("Prediction Completed Successfully")
 
@@ -285,51 +297,73 @@ if predict:
     else:
 
         st.error("🔴 Low Confidence Prediction")
-            # ----------------------------------------------------
-    # Disease Information
-    # ----------------------------------------------------
+
+# -------------------------------------------------------
+# Disease Information
+# -------------------------------------------------------
 
     st.divider()
 
     st.subheader("📖 Disease Description")
 
-    st.info(info["description"])
+    st.info(
+        info["description"]
+    )
 
-    st.subheader("🛡 Recommended Precautions")
+# -------------------------------------------------------
+# Precautions
+# -------------------------------------------------------
+
+    st.subheader(
+        "🛡 Recommended Precautions"
+    )
 
     for precaution in info["precautions"]:
 
-        st.write(f"✅ {precaution}")
+        st.write(
+            f"✅ {precaution}"
+        )
 
-    # ----------------------------------------------------
-    # Symptoms Selected
-    # ----------------------------------------------------
+# -------------------------------------------------------
+# Symptoms Selected
+# -------------------------------------------------------
 
     st.divider()
 
-    st.subheader("🦠 Symptoms Selected")
+    st.subheader(
+        "🦠 Selected Symptoms"
+    )
 
     if len(selected_symptoms) > 0:
 
         for symptom in selected_symptoms:
 
-            st.write(f"• {symptom}")
+            st.write(
+                f"• {symptom}"
+            )
 
     else:
 
-        st.write("No symptoms selected.")
+        st.info(
+            "No symptoms selected."
+        )
 
-    # ----------------------------------------------------
-    # Download Report
-    # ----------------------------------------------------
+# -------------------------------------------------------
+# Download PDF
+# -------------------------------------------------------
 
     st.divider()
 
-    st.subheader("📄 Medical Report")
+    st.subheader(
+        "📄 Medical Report"
+    )
 
     try:
 
-        with open(pdf_path, "rb") as pdf_file:
+        with open(
+            pdf_path,
+            "rb"
+        ) as pdf_file:
 
             st.download_button(
 
@@ -337,7 +371,9 @@ if predict:
 
                 data=pdf_file,
 
-                file_name=os.path.basename(pdf_path),
+                file_name=os.path.basename(
+                    pdf_path
+                ),
 
                 mime="application/pdf",
 
@@ -345,20 +381,22 @@ if predict:
 
             )
 
-    except Exception:
+    except Exception as e:
 
-        st.warning("Unable to load generated PDF report.")
+        st.warning(
+            f"Unable to load report.\n{e}"
+        )
 
-    # ----------------------------------------------------
-    # Prediction Summary
-    # ----------------------------------------------------
+# -------------------------------------------------------
+# Prediction Summary
+# -------------------------------------------------------
 
     st.divider()
 
-    st.success("✅ NeuroVisionX Analysis Completed")
+    st.subheader("📋 Prediction Summary")
 
     st.markdown(f"""
-### Summary
+### Patient Information
 
 **Patient Name:** {patient_name}
 
@@ -366,9 +404,45 @@ if predict:
 
 **Gender:** {gender}
 
+**Phone:** {phone if phone.strip() else "Not Provided"}
+
+---
+
+### Prediction
+
 **Predicted Disease:** **{prediction}**
 
-**Confidence:** **{confidence:.2f}%**
+**Confidence Score:** **{confidence:.2f}%**
 
-**AI Model Used:** SymptomNet
+**AI Model:** **SymptomNet (Artificial Neural Network)**
+
+**Number of Symptoms Selected:** **{len(selected_symptoms)}**
 """)
+
+# -------------------------------------------------------
+# Disclaimer
+# -------------------------------------------------------
+
+    st.warning(
+        """
+This prediction is generated by the NeuroVisionX AI system
+for educational and decision-support purposes only.
+
+Please consult a qualified medical professional before making
+any clinical decisions.
+        """
+    )
+
+# -------------------------------------------------------
+# Footer
+# -------------------------------------------------------
+
+    st.divider()
+
+    st.success(
+        "✅ NeuroVisionX analysis completed successfully."
+    )
+
+    st.caption(
+        "NeuroVisionX • AI-Powered Multi-Disease Clinical Decision Support System"
+    )

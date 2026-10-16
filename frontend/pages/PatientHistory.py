@@ -22,6 +22,9 @@ if PROJECT_ROOT not in sys.path:
 import pandas as pd
 import streamlit as st
 
+from sidebar import load_sidebar
+from ui import apply_theme
+
 from backend.database import NeuroVisionDatabase
 
 # -------------------------------------------------------
@@ -34,7 +37,18 @@ db = NeuroVisionDatabase()
 # Streamlit Configuration
 # -------------------------------------------------------
 
+st.set_page_config(
+    page_title="Patient History",
+    page_icon="📜",
+    layout="wide"
+)
 
+apply_theme()
+
+
+# -------------------------------------------------------
+# Title
+# -------------------------------------------------------
 
 st.title("📜 Patient Prediction History")
 
@@ -44,9 +58,9 @@ View all patient predictions stored in the NeuroVisionX database.
 
 st.divider()
 
-# -----------------------------------------------
+# -------------------------------------------------------
 # Search
-# -----------------------------------------------
+# -------------------------------------------------------
 
 search = st.text_input(
     "🔍 Search Patient"
@@ -58,9 +72,9 @@ refresh = st.button(
 
 st.divider()
 
-# -----------------------------------------------
-# Load Data
-# -----------------------------------------------
+# -------------------------------------------------------
+# Load Records
+# -------------------------------------------------------
 
 if search.strip() == "":
 
@@ -70,9 +84,11 @@ else:
 
     records = db.search_patient(search)
 
-# -----------------------------------------------
+# -------------------------------------------------------
 # Display Records
-# -----------------------------------------------
+# -------------------------------------------------------
+
+df = pd.DataFrame()
 
 if len(records) == 0:
 
@@ -83,86 +99,101 @@ else:
     columns = [
 
         "ID",
-
         "Patient",
-
         "Age",
-
         "Gender",
-
         "Disease",
-
         "Confidence",
-
         "Model",
-
         "Symptoms",
-
         "Report",
-
         "Time"
 
     ]
 
     df = pd.DataFrame(
-
         records,
-
         columns=columns
-
     )
 
     st.dataframe(
-
         df,
-
         use_container_width=True,
-
         hide_index=True
-
     )
 
     st.success(
-
         f"Total Records : {len(df)}"
-
     )
+
+# -------------------------------------------------------
+# Delete Record
+# -------------------------------------------------------
+
 st.divider()
 
 st.subheader("🗑 Delete Record")
 
 record_id = st.number_input(
-
     "Record ID",
-
     min_value=1,
-
     value=1
-
 )
 
-if st.button("Delete Record"):
+if st.button("🗑 Delete Record"):
 
     db.delete_prediction(record_id)
 
-    st.success("Record deleted successfully.")
+    st.success(
+        "Record deleted successfully."
+    )
+
+    st.rerun()
+
+# -------------------------------------------------------
+# Export CSV
+# -------------------------------------------------------
 
 st.divider()
 
 st.subheader("⬇ Export CSV")
 
-csv = df.to_csv(index=False).encode("utf-8")
+if df.empty:
 
-st.download_button(
+    st.info(
+        "No records available to export."
+    )
 
-    "Download CSV",
+else:
 
-    csv,
+    csv = df.to_csv(
+        index=False
+    ).encode("utf-8")
 
-    "PatientHistory.csv",
+    st.download_button(
 
-    "text/csv",
+        label="📥 Download CSV",
 
-    use_container_width=True
+        data=csv,
 
-)    
+        file_name="PatientHistory.csv",
+
+        mime="text/csv",
+
+        use_container_width=True
+
+    )
+
+# -------------------------------------------------------
+# Footer
+# -------------------------------------------------------
+
+st.divider()
+
+st.success(
+    "✅ Patient history loaded successfully."
+)
+
+st.caption(
+    "NeuroVisionX • AI-Powered Clinical Decision Support System"
+)

@@ -1,256 +1,336 @@
-# NeuroVisionX - AI Powered Multi-Disease Prediction System
+# NeuroVisionX: A Deep Neural Framework for Multi-Disease Prediction and Explainable Clinical Support
 
-Version: 1.0
+**NeuroVisionX** is an AI-powered healthcare support platform that integrates multiple independently trained deep-learning and neural-network models for preliminary disease prediction. It combines symptom-based classification, clinical data analysis, medical image classification, explainable AI, patient history management, and automated PDF report generation through a unified Streamlit interface.
 
-Developed by:
-N. Sri Khyathi
+> **Disclaimer:** NeuroVisionX is an academic prototype intended for research and educational purposes. Its predictions are not a substitute for professional medical diagnosis or treatment.
 
----
+## Table of Contents
 
-## PROJECT OVERVIEW
+- [Overview](#overview)
+- [Problem Statement](#problem-statement)
+- [Objectives](#objectives)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Techniques Used](#techniques-used)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Installation and Setup](#installation-and-setup)
+- [Running the Application](#running-the-application)
+- [Model Evaluation](#model-evaluation)
+- [Explainability](#explainability)
+- [Patient History and Reports](#patient-history-and-reports)
+- [Limitations](#limitations)
+- [Future Enhancements](#future-enhancements)
+- [Contributing](#contributing)
+- [License](#license)
 
-NeuroVisionX is an AI-powered healthcare platform developed using
-Deep Learning, Machine Learning, and Streamlit.
+## Overview
 
-The application predicts multiple diseases using different AI models,
-stores patient history in SQLite, generates downloadable medical reports,
-and provides explainable AI using Grad-CAM.
+Healthcare data comes in different forms, including patient-reported symptoms, structured clinical parameters, and medical images. Analyzing these data types often requires separate diagnostic tools.
 
----
+NeuroVisionX provides a centralized application containing five independent prediction modules:
 
-## FEATURES
+1. Symptom-based disease prediction across 41 disease classes.
+2. Heart disease prediction using clinical parameters.
+3. Diabetes prediction using patient health attributes.
+4. Brain tumor classification using MRI images.
+5. Pneumonia detection using chest X-ray images.
 
-• Symptom-Based Disease Prediction
-• Heart Disease Prediction
-• Diabetes Prediction
-• Brain Tumor Classification
-• Pneumonia Detection
-• Explainable AI (Grad-CAM)
-• Patient History Database
-• Analytics Dashboard
-• PDF Medical Report Generation
-• SQLite Database Integration
+The platform also supports image explainability, patient diagnostic history, analytics, and downloadable PDF reports.
 
----
+**Important:** The five prediction modules are independently trained. NeuroVisionX integrates them into a common application; it does not currently perform joint multimodal feature fusion.
 
-## TECHNOLOGIES USED
+## Problem Statement
 
-Programming Language
-• Python 3.12+
+- Separate disease prediction systems can make healthcare data analysis less centralized.
+- Manual interpretation of medical images can be time-consuming.
+- Prediction results may be difficult to interpret without visual explanations.
+- Patient diagnostic records and reports can be challenging to manage across separate tools.
+- An integrated platform is needed to organize preliminary predictions, explanations, patient history, and reporting.
 
-Frontend
-• Streamlit
+## Objectives
 
-Backend
-• PyTorch
-• Scikit-Learn
-• Pandas
-• NumPy
-• SQLite
-• ReportLab
-• Pillow
-• OpenCV
+- Develop an AI-powered platform for preliminary disease prediction.
+- Implement symptom-based, clinical-data, and medical image prediction modules.
+- Apply explainable AI to improve the interpretability of image predictions.
+- Maintain patient diagnostic history using a database.
+- Generate downloadable PDF reports.
+- Provide a user-friendly Streamlit interface for accessing the modules.
 
-Deep Learning Models
-• Feed Forward Neural Network
-• EfficientNet-B0
+## Key Features
 
-Visualization
-• Matplotlib
+### 1. Symptom-Based Disease Prediction
+- Accepts user-reported symptoms.
+- Uses symptom encoding and a neural-network classifier.
+- Supports prediction across 41 disease classes.
 
----
+### 2. Heart Disease Prediction
+- Accepts structured clinical parameters.
+- Uses a trained neural-network model to generate a prediction.
 
-## PROJECT STRUCTURE
+### 3. Diabetes Prediction
+- Analyzes patient health attributes.
+- Uses preprocessing and a trained neural-network model.
 
-project/
+### 4. Brain Tumor Classification
+- Processes brain MRI images.
+- Uses an EfficientNet-B0-based CNN model.
+- Supports Grad-CAM visualization where implemented.
 
-backend/
-predictor.py
-database.py
-disease_info.py
-explainability.py
-report_generator.py
+### 5. Pneumonia Detection
+- Processes chest X-ray images.
+- Uses an EfficientNet-B0-based CNN model.
+- Supports visual explanation through Grad-CAM where implemented.
 
-frontend/
-assets/
-pages/
-Home.py
-Symptoms.py
-Heart.py
-Diabetes.py
-BrainTumor.py
-Pneumonia.py
-PatientHistory.py
-Analytics.py
-Explainability.py
-About.py
+### 6. Explainable AI
+- **Grad-CAM:** Highlights image regions that influence image-model predictions.
+- **SHAP:** Explains feature contributions for supported prediction models.
 
+### 7. Patient History and Reporting
+- Stores and retrieves diagnostic records using SQLite.
+- Generates downloadable PDF reports.
+- Provides access to prediction history and analytics.
+
+## System Architecture
+
+The application follows a modular architecture:
+
+1. **User Interface:** Streamlit pages for entering symptoms, clinical values, and medical images.
+2. **Input Preprocessing:** Data cleaning, encoding, normalization, and image resizing.
+3. **Prediction Modules:** Five independently trained disease prediction models.
+4. **Explainability:** Grad-CAM and SHAP for supported models.
+5. **Data Management:** SQLite database for patient history.
+6. **Report Generation:** PDF creation using the report-generation module.
+7. **Results Interface:** Displays predictions, supported explanations, history, and reports.
+
+## Techniques Used
+
+| Technique | Application |
+|---|---|
+| Artificial Neural Networks (ANN) | Heart disease and diabetes prediction |
+| Neural-network classification | Symptom-based prediction |
+| CNN and transfer learning | Brain tumor and pneumonia image classification |
+| Image preprocessing | Resizing and normalization |
+| Grad-CAM and SHAP | Model explainability |
+| Model evaluation | Accuracy, precision, recall, and F1-score |
+| SQLite and PDF generation | Patient history and reporting |
+
+## Technology Stack
+
+| Component | Technologies |
+|---|---|
+| Programming language | Python |
+| Frontend | Streamlit |
+| Machine learning | Scikit-learn |
+| Deep learning | PyTorch and the framework used by each trained model |
+| Image models | EfficientNet-B0 |
+| Explainable AI | Grad-CAM, SHAP |
+| Database | SQLite |
+| Report generation | ReportLab |
+| Data processing | Pandas, NumPy |
+| Version control | Git and GitHub |
+
+*The exact libraries and versions should match the project's `requirements.txt` and implementation.*
+
+## Project Structure
+
+The following is a representative structure. Keep the actual filenames and directories in your repository if they differ.
+
+```text
+NeuroVisionX/
+├── backend/
+│   ├── predictor.py
+│   ├── predict.py
+│   └── report_generator.py
+├── frontend/
+│   ├── Home.py
+│   ├── pages/
+│   │   ├── Symptoms.py
+│   │   ├── PatientHistory.py
+│   │   ├── Heart.py
+│   │   ├── Diabetes.py
+│   │   ├── BrainTumor.py
+│   │   ├── Pneumonia.py
+│   │   ├── Analytics.py
+│   │   ├── Explainability.py
+│   │   └── About.py
+│   └── neurovisionx.db
+├── data/
+│   └── symptoms/
+├── models/
+│   ├── disease_encoder.pkl
+│   ├── symptom_encoders.pkl
+│   ├── symptom_model.pth
+│   ├── diabetes_model.pth
+│   ├── heart_model.pth
+│   ├── brain_tumor_model.pth
+│   └── pneumonia_model.pth
+├── training/
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
-streamlit_app.py
+
+**Note:** Model files may be stored in `saved_models/` or other locations in your implementation. Update this tree to match the actual repository.
+
+## Installation and Setup
+
+### Prerequisites
+
+Install the following:
+
+- Python compatible with your project's dependencies.
+- Visual Studio Code.
+- Git.
+- The trained model files required by the application.
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/srikhyathin/NeuroVisionX-A-Deep-Neural-Framework-for-Multi-Disease-Prediction-and-Explainable-Clinical-Support.git
 ```
 
-models/
+Move into the project directory:
 
-saved_models/
+```bash
+cd NeuroVisionX-A-Deep-Neural-Framework-for-Multi-Disease-Prediction-and-Explainable-Clinical-Support
+```
 
-data/
+### Step 2: Create a Virtual Environment
 
-reports/
+**Windows PowerShell:**
 
-tests/
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-.streamlit/
-config.toml
+**Linux or macOS:**
 
-requirements.txt
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-README.txt
+### Step 3: Install Dependencies
 
----
+Upgrade pip:
 
-## INSTALLATION
+```bash
+python -m pip install --upgrade pip
+```
 
-1. Clone the repository.
+Install the project dependencies:
 
-2. Create Virtual Environment
-
-Windows
-
-python -m venv .venv
-
-3. Activate Environment
-
-.venv\Scripts\activate
-
-4. Install Dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
----
+If a dependency installation fails, check the Python version and the package versions required by your trained models.
 
-## RUN THE APPLICATION
+### Step 4: Verify Model Files
 
-Start the Streamlit application
+Confirm that the required `.pth` and `.pkl` files exist in the directories expected by the model-loading code.
 
-streamlit run frontend/streamlit_app.py
+If the trained models are not included in GitHub, obtain them from your authorized project storage and place them in the expected locations.
 
-The application will open automatically at
+## Running the Application
 
+Open the project folder in VS Code and activate the virtual environment.
+
+Identify the Streamlit entry-point file from your project. If the entry point is `frontend/Home.py`, run:
+
+```bash
+python -m streamlit run frontend/Home.py
+```
+
+If your application uses a different entry point, substitute its actual path.
+
+Streamlit normally displays a local URL such as:
+
+```text
 http://localhost:8501
+```
+
+Open the URL in your browser.
+
+## Model Evaluation
+
+The prediction models should be evaluated independently using held-out test data.
+
+Recommended evaluation metrics:
+
+- **Accuracy:** Overall proportion of correct predictions.
+- **Precision:** Proportion of predicted positive cases that are correct.
+- **Recall:** Proportion of actual positive cases correctly identified.
+- **F1-score:** Harmonic mean of precision and recall.
+
+For multiclass symptom prediction, include class-wise performance and a confusion matrix where available.
+
+For brain tumor and pneumonia classification, report test-set results for the corresponding image datasets.
+
+**Results must be taken from actual evaluation outputs.** Do not treat training accuracy, prediction confidence, or illustrative figures as test accuracy. The final reported metrics should match the evaluated test set.
+
+## Explainability
+
+### Grad-CAM
+Grad-CAM generates a heatmap that highlights image regions contributing to a CNN's prediction. In NeuroVisionX, it is intended to help users inspect brain MRI and chest X-ray model outputs.
+
+### SHAP
+SHAP estimates feature contributions to model predictions for supported modules. Its availability and explanation method depend on the model implementation.
+
+Explanations indicate model behavior and should not be interpreted as proof that a highlighted region or feature caused a disease.
+
+## Patient History and Reports
+
+### SQLite Patient History
+The application uses SQLite to manage diagnostic records, including supported patient details, inputs, predictions, and timestamps.
+
+### PDF Report Generation
+The report-generation module produces downloadable PDF reports containing the relevant prediction details and other supported information.
+
+**Privacy:** Do not upload real patient records, personally identifiable health information, database files containing private records, or credentials to a public repository.
+
+## Limitations
+
+- The models are trained independently rather than through joint multimodal fusion.
+- Prediction quality depends on the training data, preprocessing, and evaluation methodology.
+- Performance may vary across patient populations, imaging devices, and clinical settings.
+- Model confidence is not necessarily a calibrated measure of uncertainty.
+- Grad-CAM and SHAP explanations do not establish clinical correctness.
+- The application requires further independent validation before any clinical use.
+
+## Future Enhancements
+
+- Evaluate models on independent and more diverse datasets.
+- Investigate calibrated uncertainty estimation.
+- Explore validated multimodal fusion across clinical data and medical images.
+- Improve model monitoring and error analysis.
+- Strengthen privacy, access control, and secure data handling.
+- Add comprehensive automated tests and reproducible evaluation reports.
+
+## Contributing
+
+Contributions and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make and test your changes.
+4. Commit your changes with a descriptive message.
+5. Submit a pull request.
+
+Please do not commit secrets, private patient information, or unlicensed datasets.
+
+## License
+
+A license has not been specified here. Add an appropriate `LICENSE` file before permitting others to reuse, modify, or redistribute the project.
+
+## Author
+
+**Sri Khyathi Nagendla**
+
+GitHub: [@srikhyathin](https://github.com/srikhyathin)
 
 ---
 
-## AVAILABLE MODULES
-
-🏠 Home
-
-🩺 Symptom Disease Prediction
-
-❤️ Heart Disease Prediction
-
-🩸 Diabetes Prediction
-
-🧠 Brain Tumor Detection
-
-🫁 Pneumonia Detection
-
-📜 Patient History
-
-📊 Analytics Dashboard
-
-🔍 Explainable AI
-
-ℹ️ About
-
----
-
-## REPORT GENERATION
-
-The application automatically generates PDF medical reports
-containing:
-
-• Patient Details
-• Disease Prediction
-• Confidence Score
-• Selected Symptoms
-• Disease Description
-• Precautions
-• AI Model Used
-• Medical Disclaimer
-
-Reports are stored inside:
-
-reports/
-
----
-
-## DATABASE
-
-SQLite Database
-
-Database File
-
-neurovisionx.db
-
-Stored Information
-
-• Patient Name
-• Age
-• Gender
-• Disease
-• Confidence
-• AI Model
-• Symptoms
-• Report Path
-• Prediction Time
-
----
-
-## EXPLAINABLE AI
-
-NeuroVisionX supports Explainable AI using Grad-CAM.
-
-Supported Models
-
-• Brain Tumor
-• Pneumonia
-
-Grad-CAM highlights the image regions responsible for the model's prediction.
-
----
-
-## FUTURE ENHANCEMENTS
-
-• Multi-language Support
-
-• Doctor Dashboard
-
-• Appointment Booking
-
-• Cloud Deployment
-
-• Mobile Application
-
-• Electronic Health Record Integration
-
-• Real-Time Patient Monitoring
-
----
-
-## LICENSE
-
-This project is intended for academic and educational purposes.
-
-The predictions generated by NeuroVisionX are for decision support only
-and should not replace professional medical advice or diagnosis.
-
----
-
-## THANK YOU
-
-NeuroVisionX
-
-AI-Powered Healthcare Platform
-
-Developed using Artificial Intelligence, Deep Learning,
-Machine Learning, and Streamlit.
+*NeuroVisionX — An academic AI platform for modular disease prediction, explainability, and clinical-support workflows.*
